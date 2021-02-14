@@ -19,27 +19,30 @@ import axios from 'axios';
 import useKeydown from '../composables/use-keydown'
 
     export default {
-        setup (props) {
+        setup (props, {emit}) {
             let email = props.email;
             // way to create methods with new api.
-            let toggleRead = () => {
-                email.read = !email.read;
-                axios.put(`http://localhost:3000/emails/${email.id}`, email);
-            };
-            let toggleArchive = () => {
-                email.archived = !email.archived;
-                axios.put(`http://localhost:3000/emails/${email.id}`, email);
-            };
-
+            let toggleRead = () => { emit('changeEmail', { toggleRead: true, save: true } )};
+            let toggleArchive = () => { emit('changeEmail', { toggleArchive: true, save: true, closeModal: true } )};
+            let goNewer = () => { emit('changeEmail', { changeIndex: -1 } )};
+            let goOlder = () => { emit('changeEmail', { changeIndex: 1 } )};
+            let goNewerAndArchive = () => { emit('changeEmail', { changeIndex: -1, toggleArchive: true, save: true } )};
+            let goOlderAndArchive = () => { emit('changeEmail', { changeIndex: 1, toggleArchive: true, save: true } )};
             useKeydown([
                 { key: 'r', fn: toggleRead },
-                { key: 'e', fn: toggleArchive }
+                { key: 'e', fn: toggleArchive },
+                { key: 'k', fn: goNewer },
+                { key: 'j', fn: goOlder },
+                { key: '[', fn: goNewerAndArchive },
+                { key: ']', fn: goOlderAndArchive }
             ]);
             return {
                 format,
                 marked,
                 toggleRead,
-                toggleArchive
+                toggleArchive,
+                goNewer,
+                goOlder
             }
         },
         name: 'MailView',
