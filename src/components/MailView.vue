@@ -1,4 +1,5 @@
 <template>
+<h1>VMail Inbox</h1>
   <div class="email-display">
       <section>
           <button @click="toggleArchive">{{ email.archived? 'Move to Inbox (e)' : 'Archive (e)'}}</button>
