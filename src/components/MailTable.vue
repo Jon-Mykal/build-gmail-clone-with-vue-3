@@ -32,6 +32,7 @@ import axios from 'axios'
 import { ref, reactive } from 'vue'
 import MailView from '@/components/MailView.vue'
 import ModalView from '@/components/ModalView.vue'
+import useEmailSelection from '../composables/use-email-selection'
 
 export default {
   name: "MailTable",
@@ -43,22 +44,9 @@ export default {
     let response = await axios.get("http://localhost:3000/emails");
     let emails = response.data;
 
-    let selectedEmails = reactive(new Set());
-    let emailSelection = {
-      emails: selectedEmails,
-      toggle(email) {
-        if (selectedEmails.has(email)) {
-          selectedEmails.delete(email);
-        }
-        else {
-          selectedEmails.add(email);
-        }
 
-        console.log(selectedEmails);
-      }
-    };
     return {
-      emailSelection,
+      emailSelection: useEmailSelection(),
       format,
       emails: ref(emails),
       openedMail: ref(null)
