@@ -28,12 +28,15 @@ import useEmailSelection from '../composables/use-email-selection'
         setup(props){
             let emailSelection =  useEmailSelection();
             // Becomes a reactive reference.
+            // Demonstrates using computed properties with Composition API.
             let numberSelected = computed(() => emailSelection.emails.size);
             let numberEmails = computed(() => props.emails.length);
             let allEmailsSelected = computed(() => numberSelected.value === numberEmails.value);
             let someEmailsSelected = computed(() => {
                 return numberSelected.value > 0 && numberSelected.value < numberEmails.value;
             });
+
+            // Way of defining a method using the Composition API
             let bulkSelect = () => {
                 if (allEmailsSelected.value) {
                     emailSelection.clear();

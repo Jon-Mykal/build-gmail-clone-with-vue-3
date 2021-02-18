@@ -20,6 +20,12 @@ import useKeydown from '../composables/use-keydown'
 
     export default {
         setup (props, {emit}) {
+            // Emit provides a way for child components to pass data
+            // to parent components. Name of event along with payload.
+
+            // Props provides access to the passed in props.
+            // Setup() does not have access to "this".
+
             let email = props.email;
             // way to create methods with new api.
             let toggleRead = () => { emit('changeEmail', { toggleRead: true, save: true } )};
@@ -36,6 +42,7 @@ import useKeydown from '../composables/use-keydown'
                 { key: '[', fn: goNewerAndArchive },
                 { key: ']', fn: goOlderAndArchive }
             ]);
+             // Return properties and methods.
             return {
                 format,
                 marked,
