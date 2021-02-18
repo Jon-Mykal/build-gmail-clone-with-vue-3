@@ -1,9 +1,14 @@
 <template>
-<h1>{{ emailSelection.emails.size}} emails selected</h1>
-<BulkActionBar :emails="unarchivedEmails" />
+<button @click="selectScreen('inbox')"
+        :disabled="selectedScreen == 'inbox'">Inbox</button>
+<button @click="selectScreen('archive')"
+        :disabled="selectedScreen == 'archive'">Archive</button>
+        <h3 v-if="selectedScreen == 'inbox'">Inbox</h3>
+        <h3 v-else="selectedScreen == 'archive'">Archive</h3>
+<BulkActionBar :emails="filteredEmails" />
     <table class="mail-table">
       <tbody>
-        <tr v-for="email in unarchivedEmails" :key="email.id" :class="[email.read ? 'read': '', 'clickable']">
+        <tr v-for="email in filteredEmails" :key="email.id" :class="[email.read ? 'read': '', 'clickable']">
           <td>
             <input type="checkbox"
                     @click="emailSelection.toggle(email)"
@@ -53,7 +58,8 @@ export default {
       emailSelection: useEmailSelection(),
       format,
       emails: ref(emails),
-      openedMail: ref(null)
+      openedMail: ref(null),
+      selectedScreen: ref('inbox')
     };
   },
   computed: {
@@ -62,11 +68,20 @@ export default {
         return e1.sentAt < e2.sentAt ? 1 : -1;
       });
     },
-    unarchivedEmails() {
-      return this.sortedEmails.filter(e => !e.archived);
+    filteredEmails() {
+      if (this.selectedScreen == 'inbox') {
+        return this.sortedEmails.filter(e => !e.archived);
+      }
+      else {
+        return this.sortedEmails.filter(e => e.archived);
+      }
     }
   },
   methods: {
+    selectScreen(newScreen) {
+      this.selectedScreen = newScreen;
+      this.emailSelection.clear();
+    },
       openEmail(email) {
           this.openedMail = email;
           if (email) {
@@ -87,7 +102,7 @@ export default {
         if (closeModal) { this.openedMail = null; }
 
         if (changeIndex) {
-          let emails = this.unarchivedEmails;
+          let emails = this.filteredEmails;
           let currentIndex = emails.indexOf(this.openedMail);
           let newEmail = emails[currentIndex + changeIndex];
           this.openEmail(newEmail);
